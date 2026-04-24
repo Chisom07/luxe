@@ -1,4 +1,4 @@
-# [Project Name: e.g., SkySweep Aggregator]
+# Luxe: Premium Travel Aggregator
 
 A high-performance Flight and Hotel search aggregator built with Node.js and Express. This project integrates the Skyscanner API (via RapidAPI) to provide real-time travel options, featuring currency conversion to NGN and Redis caching for optimized performance.
 
