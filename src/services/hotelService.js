@@ -26,21 +26,35 @@
 
 const { searchHotels } = require("../integrations/skyscanner");
 const { convertToNGN } = require("./currencyService");
+const { applySort } = require("../utils/sort");
+const { paginate } = require("../utils/pagination");
+
+const normalizePrice = (price) => {
+  if (!price) return 0;
+  if (typeof price === "number") return price;
+  if (typeof price === "string") return parseFloat(price.replace(/[^0-9.]/g, "")) || 0;
+  return price.amount || 0;
+};
 
 exports.getHotels = async (query) => {
-    const data = await searchHotels(query);
+  const { cityCode, checkIn, checkOut, passengers, sortBy, page = 1, limit = 10 } = query;
+  const data = await searchHotels({ cityCode, checkIn, checkOut, passengers: passengers || 1 });
 
-    const hotels = data?.results?.map(async (hotel) => {
-        const priceUSD = hotel.price || 0;
-        const priceNGN = await convertToNGN(priceUSD);
+  const hotels = data?.data?.results || data?.results || data?.hotels || [];
 
-        return {
-            name: hotel.name,
-            rating: hotel.rating,
-            priceUSD,
-            priceNGN: Math.round(priceNGN)
-        };
-    });
+  const normalized = await Promise.all(
+    hotels.map(async (hotel) => {
+      const priceUSD = normalizePrice(hotel.price || hotel.minPrice || hotel.price?.amount || hotel.price?.formatted);
+      return {
+        name: hotel.name || hotel.hotelName || "Unknown Hotel",
+        rating: hotel.rating || hotel.starRating || "N/A",
+        address: hotel.address || hotel.location || "N/A",
+        priceUSD,
+        priceNGN: Math.round(await convertToNGN(priceUSD)),
+      };
+    })
+  );
 
-    return Promise.all(hotels);
+  normalized = applySort(normalized, sortBy);
+  return paginate(normalized, page, limit);
 };

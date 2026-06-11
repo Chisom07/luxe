@@ -29,31 +29,26 @@
 const { getFlights } = require("../services/flightService");
 const { getCache, setCache } = require("../cache/cacheService");
 const { flightSchema } = require("../validators/flightValidator");
-const express = require("express");
 
-const app = express();
+const searchFlights = async (req, res) => {
+  try {
+    const { error } = flightSchema.validate(req.query);
+    if (error) return res.status(400).json({ error: error.message });
 
-const searchFlights = app.get ("/flights", async (req, res) => {
-    try {
-        const { error } = flightSchema.validate(req.query);
-        if (error) return res.status(400).json({ error: error.message });
+    const key = `flights:${JSON.stringify(req.query)}`;
 
-        const key = `flights:${JSON.stringify(req.query)}`;
+    const cached = await getCache(key);
+    if (cached) return res.json({ source: "cache", data: cached });
 
-        const cached = await getCache(key);
-        if (cached) return res.json({ source: "cache", data: cached });
+    const flights = await getFlights(req.query);
 
-        const flights = await getFlights(req.query);
+    await setCache(key, flights);
 
-        await setCache(key, flights);
-
-        res.json({ source: "api", data: flights });
-
-    } catch (error) {
-        console.error("Error in searchFlights:", error);
-        return res.status(500).json({ error: error.message });
-    };
-    
-});
+    res.json({ source: "api", data: flights });
+  } catch (error) {
+    console.error("Error in searchFlights:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = { searchFlights };

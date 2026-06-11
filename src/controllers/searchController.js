@@ -51,12 +51,42 @@
 
 const { getFlights } = require("../services/flightService");
 const { getHotels } = require("../services/hotelService");
+const { getCache, setCache } = require("../cache/cacheService");
 
-exports.searchAll = async(req, res) => {
-    const [flights, hotels] = await Promise.all([
-        getFlights(req.query),
-        getHotels(req.query)
+exports.searchAll = async (req, res) => {
+  const cacheKey = `search:${JSON.stringify(req.query)}`;
+  const cached = await getCache(cacheKey);
+  if (cached) return res.json(cached);
+
+  try {
+    const [flightResult, hotelResult] = await Promise.all([
+      getFlights(req.query),
+      getHotels(req.query),
     ]);
 
-    res.json({ flights, hotels });
+    const response = {
+      meta: {
+        flights: {
+          total: flightResult.total,
+          page: flightResult.page,
+          totalPages: flightResult.totalPages,
+        },
+        hotels: {
+          total: hotelResult.total,
+          page: hotelResult.page,
+          totalPages: hotelResult.totalPages,
+        },
+      },
+      data: {
+        flights: flightResult.results,
+        hotels: hotelResult.results,
+      },
+    };
+
+    await setCache(cacheKey, response, 600);
+    res.json(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Search failed" });
+  }
 };

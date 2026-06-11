@@ -27,5 +27,6 @@ Currently in active development.
 3. Create a `.env` file and add your API keys:
    ```text
    RAPIDAPI_KEY=your_key_here
-   EXCHANGE_RATE_API_KEY=your_key_here
-   REDIS_URL=127.0.0.1:6379
+   RAPIDAPI_HOST=skyscanner-flights-travel-api.p.rapidapi.com
+   EXCHANGE_API_KEY=https://v6.exchangerate-api.com/v6/YOUR_KEY/latest/USD
+   REDIS_URL=redis://127.0.0.1:6379
