@@ -19,14 +19,11 @@ const routes = require("./routes");
 
 const app = express();
 
-app.get('/', async (req, res) => {
-    res.send('REST API AUTHENTICATION AND AUTHORIZATION')
-});
-
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
 app.use("/api", routes);
+app.use(express.static("public"));
 
 module.exports = app;

@@ -40,15 +40,24 @@ exports.getHotels = async (query) => {
   const { cityCode, checkIn, checkOut, passengers, sortBy, page = 1, limit = 10 } = query;
   const data = await searchHotels({ cityCode, checkIn, checkOut, passengers: passengers || 1 });
 
-  const hotels = data?.data?.results || data?.results || data?.hotels || [];
+  const hotels =
+    data?.hotels ||
+    data?.results ||
+    data?.data?.hotels ||
+    data?.data?.results ||
+    (Array.isArray(data?.data) ? data.data : []) ||
+    [];
 
-  const normalized = await Promise.all(
+  let normalized = await Promise.all(
     hotels.map(async (hotel) => {
-      const priceUSD = normalizePrice(hotel.price || hotel.minPrice || hotel.price?.amount || hotel.price?.formatted);
+      const priceUSD = normalizePrice(
+        hotel.price?.amount ?? hotel.price?.formatted ?? hotel.price ?? hotel.minPrice
+      );
       return {
         name: hotel.name || hotel.hotelName || "Unknown Hotel",
-        rating: hotel.rating || hotel.starRating || "N/A",
-        address: hotel.address || hotel.location || "N/A",
+        rating: hotel.rating || hotel.stars || hotel.starRating || "N/A",
+        address: hotel.distance || hotel.address || hotel.location || "N/A",
+        image: hotel.images?.[0] || null,
         priceUSD,
         priceNGN: Math.round(await convertToNGN(priceUSD)),
       };

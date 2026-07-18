@@ -1,36 +1,25 @@
-// // // utils/sort.js
-
-// // const sortFlights = (flights, sortBy) => {
-// //   switch (sortBy) {
-// //     case "price_asc":
-// //       return flights.sort((a, b) => a.priceUSD - b.priceUSD);
-
-// //     case "price_desc":
-// //       return flights.sort((a, b) => b.priceUSD - a.priceUSD);
-
-// //     case "duration":
-// //       return flights.sort((a, b) => a.duration - b.duration);
-
-// //     default:
-// //       return flights;
-// //   }
-// // };
-
-// // module.exports = { sortFlights };
-
-
-
-// const sortByPrice = (a, b) => a.price - b.price;
-// module.exports = { sortByPrice };
-
-
 exports.applySort = (data, sortBy) => {
-    if (sortBy === "price")
-        return data.sort((a, b) => a.priceNGN - b.priceNGN);
+  if (!Array.isArray(data) || !sortBy) return data;
 
-    if (sortBy === "duration")
-        return data.sort((a, b) => a.duration - b.duration);
-    
+  const sorted = [...data];
 
-    return data;
+  if (sortBy === "price") {
+    return sorted.sort((a, b) => (a.priceNGN || 0) - (b.priceNGN || 0));
+  }
+
+  if (sortBy === "duration") {
+    return sorted.sort(
+      (a, b) => (a.durationMinutes || 0) - (b.durationMinutes || 0)
+    );
+  }
+
+  if (sortBy === "rating") {
+    return sorted.sort((a, b) => {
+      const ratingA = Number(a.rating) || 0;
+      const ratingB = Number(b.rating) || 0;
+      return ratingB - ratingA;
+    });
+  }
+
+  return data;
 };

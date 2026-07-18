@@ -16,6 +16,7 @@ const { getCache, setCache } = require("../cache/cacheService");
 const  { hotelSchema } = require("../validators/hotelValidator");
 
 exports.searchHotels = async (req, res) => {
+  try {
     const { error } = hotelSchema.validate(req.query);
     if (error) return res.status(400).json({ error: error.message });
 
@@ -29,4 +30,8 @@ exports.searchHotels = async (req, res) => {
     await setCache(key, hotels);
 
     res.json({ source: "api", data: hotels });
+  } catch (error) {
+    console.error("Error in searchHotels:", error);
+    return res.status(500).json({ error: error.message || "Hotel search failed" });
+  }
 };

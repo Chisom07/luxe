@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In | Luxe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="auth-page">
+  <header>
+    <nav>
+      <a class="brand" href="/">Luxe</a>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/#flights">Flights</a></li>
+        <li><a href="/#hotels">Hotels</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions" data-auth-actions>
+      <a class="ghost-link" href="/login.html">Log in</a>
+      <a class="header-btn" href="/signup.html">Sign up</a>
+    </div>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-panel">
+      <p class="eyebrow">Welcome back</p>
+      <h1>Log in to continue your journey.</h1>
+      <p class="auth-lead">Access your account to search, compare, and manage your travel plans.</p>
+
+      <form id="loginForm" class="auth-form">
+        <div class="field-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <div id="authStatus" class="auth-status" hidden></div>
+        <button class="primary-btn auth-submit" type="submit">Log in</button>
+      </form>
+
+      <p class="auth-switch">New here? <a href="/signup.html">Create an account</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer auth-footer">
+    <div class="footer-bottom">
+      <p>© 2026 Luxe Travel</p>
+      <p><a href="/#hotels">Popular hotels</a> · <a href="/#flights">Popular flights</a></p>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

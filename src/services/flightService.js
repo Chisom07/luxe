@@ -67,18 +67,27 @@ exports.getFlights = async (query) => {
 
   const itineraries = data?.data?.itineraries || data?.itineraries || [];
 
-  const flights = await Promise.all(
+  let flights = await Promise.all(
     itineraries.map(async (flight) => {
       const leg = flight.legs?.[0] || {};
-      const priceUSD = normalizePrice(flight.price || flight.price?.amount || flight.price?.formatted);
+      const durationMinutes =
+        leg.durationMinutes || leg.durationInMinutes || leg.duration || 0;
+      const carriers = leg.carriers?.marketing || leg.carriers || [];
+      const airline =
+        carriers[0]?.name ||
+        carriers[0]?.marketing?.[0]?.name ||
+        "Unknown Airline";
+      const priceUSD = normalizePrice(
+        flight.price?.amount ?? flight.price?.formatted ?? flight.price
+      );
 
       return {
-        airline: leg?.carriers?.marketing?.[0]?.name || "Unknown Airline",
-        durationMinutes: leg?.durationInMinutes || 0,
-        duration: `${Math.floor((leg?.durationInMinutes || 0) / 60)}h ${Math.round((leg?.durationInMinutes || 0) % 60)}m`,
-        stops: leg?.stopCount ?? 0,
-        from: leg?.origin?.name || from,
-        to: leg?.destination?.name || to,
+        airline,
+        durationMinutes,
+        duration: `${Math.floor(durationMinutes / 60)}h ${Math.round(durationMinutes % 60)}m`,
+        stops: leg.stopCount ?? 0,
+        from: leg.origin?.name || leg.origin || from,
+        to: leg.destination?.name || leg.destination || to,
         priceUSD,
         priceNGN: Math.round(await convertToNGN(priceUSD)),
       };

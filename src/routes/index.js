@@ -21,5 +21,7 @@ router.use("/flights", require("./flightRoutes"));
 router.use("/hotels", require("./hotelRoutes"));
 router.use("/bookmarks", require("./bookmarkRoutes"));
 router.use("/search", require("./searchRoutes"));
+router.use("/locations", require("./locationRoutes"));
+router.use("/auth", require("./authRoutes"));
 
 module.exports = router;

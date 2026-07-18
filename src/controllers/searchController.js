@@ -86,7 +86,21 @@ exports.searchAll = async (req, res) => {
     await setCache(cacheKey, response, 600);
     res.json(response);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Search failed" });
+    console.error("Error in searchAll:", err.response?.data || err.message);
+
+    const status = err.response?.status;
+    const upstreamMessage = err.response?.data?.message;
+
+    if (status === 429) {
+      return res.status(429).json({
+        error:
+          upstreamMessage ||
+          "The travel data provider rate limit or monthly quota has been reached. Please try again later.",
+      });
+    }
+
+    res.status(status || 500).json({
+      error: upstreamMessage || err.message || "Search failed",
+    });
   }
 };

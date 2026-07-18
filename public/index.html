@@ -3,107 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travel Search</title>
-  <link rel="stylesheet" href="css/styles.css" />
+  <title>Luxe | Flight & Hotel Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
-  <header>
+  <header class="site-header">
     <nav>
-      <p>Luxe</p>
+      <a class="brand" href="/">Luxe</a>
       <ul>
         <li><a href="#home">Home</a></li>
         <li><a href="#flights">Flights</a></li>
         <li><a href="#hotels">Hotels</a></li>
       </ul>
     </nav>
-    <div>
-      <button>Sign Up</button>
-      <button>Log In</button>
+    <div class="header-actions" data-auth-actions>
+      <a class="ghost-link" href="/login.html">Log in</a>
+      <a class="header-btn" href="/signup.html">Sign up</a>
     </div>
   </header>
-  
-  <main class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow">Travel starts here</p>
-      <h1>Flight & hotel search in one place</h1>
-      <p>Compare real-time options, convert prices to NGN instantly, and save your favourites.</p>
-    </div>
 
-    <section class="search-panel">
-      <form id="searchForm">
-        <div class="fields-row">
-          <div class="field-group">
-            <label for="from">From</label>
-            <input placeholder="LOS" type="text" id="from" required maxlength="3" />
-          </div>
-          <div class="field-group">
-            <label for="to">To</label>
-            <input placeholder="LHR" type="text" id="to" required maxlength="3" />
-          </div>
-          <div class="field-group">
-            <label for="date">Flight date</label>
-            <input type="date" id="date" required />
-          </div>
+  <main id="home" class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-layout">
+      <div class="hero-copy reveal">
+        <p class="brand-mark">Luxe</p>
+        <h1>Travel, compared clearly.</h1>
+        <p>Search live flights and hotels with prices converted to naira in one calm place.</p>
+        <div class="hero-actions">
+          <a class="secondary-btn" href="#flights">Flights only</a>
+          <a class="secondary-btn" href="#hotels">Hotels only</a>
+        </div>
+      </div>
+
+      <form id="combinedForm" class="hero-search reveal" aria-label="Combined flight and hotel search">
+        <div class="hero-search-head">
+          <p class="eyebrow">Plan a trip</p>
+          <h2>Flights + hotels</h2>
+          <p>Fill once and search both in a single click.</p>
         </div>
 
-        <div class="fields-row">
-          <div class="field-group">
-            <label for="cityCode">Hotel city</label>
-            <input placeholder="PAR" type="text" id="cityCode" required maxlength="3" />
+        <div class="hero-search-grid">
+          <div class="field-group autocomplete">
+            <label for="comboFrom">From</label>
+            <input id="comboFrom" name="from" type="text" placeholder="City or airport" required autocomplete="off">
+            <ul class="suggestions" id="comboFromSuggestions" role="listbox" hidden></ul>
+          </div>
+          <div class="field-group autocomplete">
+            <label for="comboTo">To</label>
+            <input id="comboTo" name="to" type="text" placeholder="City or airport" required autocomplete="off">
+            <ul class="suggestions" id="comboToSuggestions" role="listbox" hidden></ul>
           </div>
           <div class="field-group">
-            <label for="checkIn">Check in</label>
-            <input type="date" id="checkIn" required />
+            <label for="comboDate">Flight date</label>
+            <input id="comboDate" name="date" type="date" required>
+          </div>
+          <div class="field-group autocomplete">
+            <label for="comboCity">Hotel city</label>
+            <input id="comboCity" name="cityCode" type="text" placeholder="Where you'll stay" required autocomplete="off">
+            <ul class="suggestions" id="comboCitySuggestions" role="listbox" hidden></ul>
           </div>
           <div class="field-group">
-            <label for="checkOut">Check out</label>
-            <input type="date" id="checkOut" required />
+            <label for="comboCheckIn">Check in</label>
+            <input id="comboCheckIn" name="checkIn" type="date" required>
           </div>
+          <div class="field-group">
+            <label for="comboCheckOut">Check out</label>
+            <input id="comboCheckOut" name="checkOut" type="date" required>
+          </div>
+          <div class="field-group">
+            <label for="comboPassengers">Travellers</label>
+            <input id="comboPassengers" name="passengers" type="number" min="1" max="10" value="1" required>
+          </div>
+          <button type="submit" class="primary-btn hero-search-btn">Search trip</button>
         </div>
-
-        <div class="actions">
-          <div class="field-group small">
-            <label for="passengers">Passengers</label>
-            <input type="number" id="passengers" min="1" max="10" value="1" required />
-          </div>
-          <div class="field-group small">
-            <label for="flightSort">Flight sort</label>
-            <select id="flightSort">
-              <option value="">Default</option>
-              <option value="price">Price (NGN)</option>
-              <option value="duration">Duration</option>
-            </select>
-          </div>
-          <div class="field-group small">
-            <label for="stops">Max stops</label>
-            <select id="stops">
-              <option value="">Any</option>
-              <option value="0">Non-stop</option>
-              <option value="1">1 stop</option>
-              <option value="2">2+ stops</option>
-            </select>
-          </div>
-          <button type="submit" class="primary-btn">Search options</button>
-        </div>
+        <p id="combinedStatus" class="hero-search-status" hidden></p>
       </form>
-    </section>
+    </div>
   </main>
 
-  <section class="results-section">
-    <div id="status" class="status"></div>
-    <div class="results-group">
-      <h2>Flights</h2>
-      <div id="flightControls" class="controls"></div>
-      <div id="flightResults" class="results-grid"></div>
+  <section id="flights" class="travel-section flight-section">
+    <div class="section-intro reveal">
+      <div>
+        <p class="eyebrow">Flights</p>
+        <h2>Find your next flight</h2>
+      </div>
+      <p>Search any route, sort by price or duration, and page through options that fit your trip.</p>
     </div>
-    <div class="results-group">
-      <h2>Hotels</h2>
-      <div id="hotelControls" class="controls"></div>
-      <div id="hotelResults" class="results-grid"></div>
+
+    <form id="flightForm" class="search-panel section-search reveal">
+      <div class="fields-row flight-fields">
+        <div class="field-group autocomplete">
+          <label for="flightFrom">From</label>
+          <input placeholder="City or airport" type="text" id="flightFrom" name="from" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+          <ul class="suggestions" id="flightFromSuggestions" role="listbox" hidden></ul>
+        </div>
+        <div class="field-group autocomplete">
+          <label for="flightTo">To</label>
+          <input placeholder="City or airport" type="text" id="flightTo" name="to" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+          <ul class="suggestions" id="flightToSuggestions" role="listbox" hidden></ul>
+        </div>
+        <div class="field-group">
+          <label for="flightDate">Departure</label>
+          <input type="date" id="flightDate" name="date" required>
+        </div>
+        <div class="field-group">
+          <label for="flightPassengers">Travellers</label>
+          <input type="number" id="flightPassengers" name="passengers" min="1" max="10" value="1" required>
+        </div>
+        <div class="field-group">
+          <label for="flightSort">Sort by</label>
+          <select id="flightSort" name="sortBy">
+            <option value="">Default</option>
+            <option value="price">Price (NGN)</option>
+            <option value="duration">Duration</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label for="flightStops">Max stops</label>
+          <select id="flightStops" name="stops">
+            <option value="">Any</option>
+            <option value="0">Non-stop</option>
+            <option value="1">1 stop</option>
+            <option value="2">2 stops</option>
+          </select>
+        </div>
+        <button type="submit" class="primary-btn section-search-btn">Search flights</button>
+      </div>
+    </form>
+
+    <div class="results-area" aria-live="polite">
+      <div id="flightStatus" class="status empty-state">Your available flights will appear here.</div>
+      <div id="flightResults" class="results-list"></div>
+      <div id="flightPagination" class="controls"></div>
     </div>
   </section>
 
+  <section id="hotels" class="travel-section hotel-section">
+    <div class="section-intro reveal">
+      <div>
+        <p class="eyebrow">Hotels</p>
+        <h2>Discover your perfect stay</h2>
+      </div>
+      <p>Browse stays by destination and dates, then sort by price or guest rating.</p>
+    </div>
+
+    <form id="hotelForm" class="search-panel section-search reveal">
+      <div class="fields-row hotel-fields">
+        <div class="field-group autocomplete">
+          <label for="hotelCity">Destination</label>
+          <input placeholder="City or place" type="text" id="hotelCity" name="cityCode" required autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false">
+          <ul class="suggestions" id="hotelCitySuggestions" role="listbox" hidden></ul>
+        </div>
+        <div class="field-group">
+          <label for="hotelCheckIn">Check in</label>
+          <input type="date" id="hotelCheckIn" name="checkIn" required>
+        </div>
+        <div class="field-group">
+          <label for="hotelCheckOut">Check out</label>
+          <input type="date" id="hotelCheckOut" name="checkOut" required>
+        </div>
+        <div class="field-group">
+          <label for="hotelSort">Sort by</label>
+          <select id="hotelSort" name="sortBy">
+            <option value="">Default</option>
+            <option value="price">Price (NGN)</option>
+            <option value="rating">Rating</option>
+          </select>
+        </div>
+        <button type="submit" class="primary-btn section-search-btn">Search hotels</button>
+      </div>
+    </form>
+
+    <div class="results-area" aria-live="polite">
+      <div id="hotelStatus" class="status empty-state">Your available hotels will appear here.</div>
+      <div id="hotelResults" class="results-grid"></div>
+      <div id="hotelPagination" class="controls"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="/">Luxe</a>
+        <p>Compare flights and hotels with clear pricing in naira. Built for travellers who want options without the noise.</p>
+      </div>
+
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h3>Countries</h3>
+          <ul>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Nigeria">Nigeria</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="United Kingdom">United Kingdom</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="France">France</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="United Arab Emirates">United Arab Emirates</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="United States">United States</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Turkey">Turkey</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Popular getaways</h3>
+          <ul>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Lagos" data-to="London">Lagos → London</button></li>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Lagos" data-to="Dubai">Lagos → Dubai</button></li>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Abuja" data-to="Paris">Abuja → Paris</button></li>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Lagos" data-to="New York">Lagos → New York</button></li>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Lagos" data-to="Istanbul">Lagos → Istanbul</button></li>
+            <li><button type="button" class="footer-link" data-fill="flight" data-from="Lagos" data-to="Accra">Lagos → Accra</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Hotel cities</h3>
+          <ul>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Paris">Paris</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="London">London</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Dubai">Dubai</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="New York">New York</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Cape Town">Cape Town</button></li>
+            <li><button type="button" class="footer-link" data-fill="hotel" data-value="Zanzibar">Zanzibar</button></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h3>Explore</h3>
+          <ul>
+            <li><a href="#flights">Search flights</a></li>
+            <li><a href="#hotels">Search hotels</a></li>
+            <li><a href="/signup.html">Create account</a></li>
+            <li><a href="/login.html">Log in</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Luxe Travel. All rights reserved.</p>
+      <p>Prices shown in NGN where available.</p>
+    </div>
+  </footer>
+
+  <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
